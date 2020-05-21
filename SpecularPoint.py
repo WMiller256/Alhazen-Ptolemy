@@ -1,3 +1,4 @@
+import numpy as np
 from cmath import sqrt, sin, cos
 from math import acos
 
@@ -16,10 +17,10 @@ def onefinite(d, rs, opt=0):
 	C4 = sqrt(-0.25 * rs2_4 + (1.0 / 12.0) * rs2_4 + C3)
 
 	p = -0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))
-	if opt == 0 || opt == 7: p = -0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))
-	if opt == 1 || opt == 6: p = 0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))
-	if opt == 2 || opt == 5: p = 0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))
-	if opt == 3 || opt == 4: p = 0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))
+	if opt == 0 or opt == 7: p = -0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))
+	if opt == 1 or opt == 6: p = 0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))
+	if opt == 2 or opt == 5: p = 0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))
+	if opt == 3 or opt == 4: p = 0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))
 
 	if opt > 3:
 		return -acos(p.real)
@@ -52,3 +53,30 @@ def twofinite(d, rs, rd, opt=0):
 		return -acos(p.real)
 	else:
 		return acos(p.real)
+
+def numerical(td, rs, rd, ts=np.pi*0.5, rt=2575.0):
+	tolerance = 1e-6
+	tp = ts        # Start at the source
+	t1 = np.arctan2(rd * np.sin(td) - rt * np.sin(tp), rd * np.cos(td) - rt * np.cos(tp))
+	t2 = np.arctan2(rs * np.sin(tp) - rt * np.sin(tp), rs * np.cos(ts) - rt * np.cos(tp))
+	e = ts - (tp - t1)
+	i = ts - (t2 - tp)
+	ie_diff = e - i
+	n = 0
+	while abs(ie_diff) > tolerance:
+		n += 1
+		t1 = np.arctan2(rd * np.sin(td) - rt * np.sin(tp), rd * np.cos(td) - rt * np.cos(tp))
+		t2 = np.arctan2(rs * np.sin(ts) - rt * np.sin(tp), rs * np.cos(ts) - rt * np.cos(tp))
+		tp += ie_diff * 0.05
+		e = ts - (tp - t1)
+		i = ts - (t2 - tp)
+		ie_diff = e - i
+		if n > 100: break
+
+	print("Iters    : ", n)
+	print("Detector : ", np.degrees(td))
+	print("Scatter  : ", np.degrees(np.pi*0.5))
+	print("specular : ", np.degrees(tp))
+	print("abs(i-e) : ", abs(ie_diff))
+
+numerical(np.pi*0.25, 3000, 1e9)

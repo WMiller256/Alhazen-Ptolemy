@@ -55,7 +55,7 @@ double twofinite(const double &d, const double &rs, const double &rd, bool print
 	cdouble C0 = rd2 + rs2 + 2 * rd * rs * sd - 4;
 	cdouble C5 = 24 * rd * cd2 * (rd - rs * sd) - 48 * (-1 + rs2) * cd2 + std::pow(C0, 2); 
 	cdouble C6 = -432 * rd2 * (-1 + rs2) * std::pow(cd2, 2) + 432 * cd2 * std::pow(rd - rs * sd,2) + 72 * rd * cd2 * (rd - rs * sd) * C0 + 288 * (-1 + rs2) * cd2 * C0 + 2 * std::pow(C0, 3); 
-	cdouble C1 =std::pow(C6 + std::sqrt(-4 * std::pow(C5, 3) + std::pow(C6, 2)), 1.0 / 3.0); 
+	cdouble C1 = std::pow(C6 + std::sqrt(-4 * std::pow(C5, 3) + std::pow(C6, 2)), 1.0 / 3.0); 
 	cdouble C2 = (rd2 * cd2) / 4.0 - C0 / 6.0; 
 	cdouble C3 = C5 / (6 * std::pow(2, 2.0 / 3.0) * C1) + C1 / (12 * std::cbrt(2)); 
 	cdouble C4 = std::sqrt(C2 + C3);
