@@ -78,9 +78,29 @@ double randf(double a, double b) { return (double(rand()) / double(RAND_MAX)) * 
 
 int main(int argn, char** argv) {
 	if (argn < 3) {
+		// One-finite
 		auto start = std::chrono::high_resolution_clock::now();
 		int percent = 0;
-		long end = 1e6;
+		long end = 1e7;
+		std::cout << std::setw(3) << percent << std::flush;
+		for (long ii = 0; ii < end; ii ++) {
+			onefinite(randf(0, pi), randf(0, 1.0));
+			if ((100 * ii) / end > percent) {
+				percent = (100 * ii) / end;
+				std::cout << '\r' << std::setw(3) << percent << std::flush;
+			}
+		}
+		std::cout << "\r100" << std::flush;
+		auto stop = std::chrono::high_resolution_clock::now();
+		std::cout << "\rOne finite  : ";
+		std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+		std::cout << " us (" << std::setprecision(0) << std::scientific << (double)end << " iterations)" << std::endl;
+		std::cout << std::defaultfloat;
+
+		// Both-finite
+		start = std::chrono::high_resolution_clock::now();
+		percent = 0;
+		end = 1e7;
 		std::cout << std::setw(3) << percent << std::flush;
 		for (long ii = 0; ii < end; ii ++) {
 			twofinite(randf(0, pi), randf(0, 1.0), randf(0, 1.0));
@@ -89,9 +109,12 @@ int main(int argn, char** argv) {
 				std::cout << '\r' << std::setw(3) << percent << std::flush;
 			}
 		}
-		std::cout << "\r100" << std::endl;
-		auto stop = std::chrono::high_resolution_clock::now();
-		std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << std::endl;
+		std::cout << "\r100" << std::flush;
+		stop = std::chrono::high_resolution_clock::now();
+		std::cout << "\rBoth finite : ";
+		std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+		std::cout << " us (" << std::setprecision(0) << std::scientific << (double)end << " iterations)" << std::endl;
+		std::cout << std::defaultfloat;
 	}
 	else {
 		std::cout << "d is in degrees" << std::endl;
