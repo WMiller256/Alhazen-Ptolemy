@@ -30,7 +30,14 @@ double onefinite(const double &d, const double &rs, bool print = false) {
 	cdouble C2 = std::pow(16 * rs2_43 + C0 - C1, 1.0 / 3.0);
 	cdouble C3 = (40 - 32 * rs2 + rs4 + 24 * cd - 24 * rs2 * cd) / (3 * std::pow(2, 2.0 / 3.0) * C2) + C2 / (24 * std::cbrt(2));
 	cdouble C4 = std::sqrt(-0.25 * rs2_4 + (1.0 / 12.0) * rs2_4 + C3);
-	double p = acos((0.5 * C4 - 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))).real());
+	double p;
+	double l = -7.4522e-2 * std::pow(rs, 4) + 2.9926e-2 * std::pow(rs, 3) - 3.8429e-2 * std::pow(rs, 2) - 7.0116e-1 * rs + 1.834e-4;
+	if (d <= l) {
+	 	p = acos((0.5 * C4 - 0.5 * std::sqrt(-(rs2_4 / 3.0) - C3 + (rs * sd) / (2 * C4))).real());
+	}
+	else if (d > l) {
+	 	p = acos((0.5 * C4 + 0.5 * std::sqrt(-(rs2_4 / 3.0) - C3 + (rs * sd) / (2 * C4))).real());
+	}
  	if (print) {
 		std::cout << "+--- " << acos((-0.5 * C4 - 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))).real()) << std::endl;
 		std::cout << "+-+- " << acos((-0.5 * C4 + 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))).real()) << std::endl;
@@ -60,12 +67,12 @@ double twofinite(const double &d, const double &rs, const double &rd, bool print
 	cdouble C3 = C5 / (6 * std::pow(2, 2.0 / 3.0) * C1) + C1 / (12 * std::cbrt(2)); 
 	cdouble C4 = std::sqrt(C2 + C3);
 	double p;
-	double l1 = std::atan(rs + rd * std::sqrt(1 - rd2 + rs2) / (rs2 + rd2)) - pi
-	double l2 = pi * (7.000e-4 * sin(pi * (3.600 * c + 2.0 / 3.0)) * std::pow(c, 4) + 
-			          3.500e-4 * sin(pi * (3.600 * c + 5.0 / 3.0)) * std::pow(c, 3) +
-			          4.725e-4 * sin(pi * (3.550 * c + 2.0 / 3.0)) * std::pow(c, 2) + 
-			          3.750e-4 * sin(pi * (3.525 * c - 1.0 / 3.0)) * std::pow(c, 1) +
-			          1.550e-4 * sin(pi * (211.0 / 60.0 * c + 2.0 / 3.0));
+	double l1 = (std::atan(rs + rd * std::sqrt(1 - rd2 + rs2) / (rs2 + rd2)) - pi).real();
+	double l2 = pi * (7.000e-4 * sin(pi * (3.600 * rs + 2.0 / 3.0)) * std::pow(rs, 4) + 
+			          3.500e-4 * sin(pi * (3.600 * rs + 5.0 / 3.0)) * std::pow(rs, 3) +
+			          4.725e-4 * sin(pi * (3.550 * rs + 2.0 / 3.0)) * std::pow(rs, 2) + 
+			          3.750e-4 * sin(pi * (3.525 * rs - 1.0 / 3.0)) * std::pow(rs, 1) +
+			          1.550e-4 * sin(pi * (211.0 / 60.0 * rs + 2.0 / 3.0)));
 	if (-pi / 2 < d && d < l1) {
 		p = -acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
 	}
