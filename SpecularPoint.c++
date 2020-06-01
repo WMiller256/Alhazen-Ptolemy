@@ -59,7 +59,22 @@ double twofinite(const double &d, const double &rs, const double &rd, bool print
 	cdouble C2 = (rd2 * cd2) / 4.0 - C0 / 6.0; 
 	cdouble C3 = C5 / (6 * std::pow(2, 2.0 / 3.0) * C1) + C1 / (12 * std::cbrt(2)); 
 	cdouble C4 = std::sqrt(C2 + C3);
-	double p = acos((rd * cd) * 0.25 + C4 * 0.5 - std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
+	double p;
+	double l1 = std::atan(rs + rd * std::sqrt(1 - rd2 + rs2) / (rs2 + rd2)) - pi
+	double l2 = pi * (7.000e-4 * sin(pi * (3.600 * c + 2.0 / 3.0)) * std::pow(c, 4) + 
+			          3.500e-4 * sin(pi * (3.600 * c + 5.0 / 3.0)) * std::pow(c, 3) +
+			          4.725e-4 * sin(pi * (3.550 * c + 2.0 / 3.0)) * std::pow(c, 2) + 
+			          3.750e-4 * sin(pi * (3.525 * c - 1.0 / 3.0)) * std::pow(c, 1) +
+			          1.550e-4 * sin(pi * (211.0 / 60.0 * c + 2.0 / 3.0));
+	if (-pi / 2 < d && d < l1) {
+		p = -acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
+	}
+	else if (l1 <= d && d <= l2) {
+		p = acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
+	}
+	else if (l2 < d && d <= pi / 2) {
+		p = acos((rd * cd) * 0.25 + C4 * 0.5 - std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
+	}
 	if (print) {
 		std::cout << "+--- " << acos((rd * cd) * 0.25 - C4 * 0.5 - std::sqrt(2 * C2 - C3 - (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
 		std::cout << "+-+- " << acos((rd * cd) * 0.25 - C4 * 0.5 + std::sqrt(2 * C2 - C3 - (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
