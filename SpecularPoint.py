@@ -77,9 +77,7 @@ def branchdeducing_onefinite(d, rs):
 		return p2
 	
 
-flag = True
 def branchdeducing_twofinite(d, rs, rd):
-	global flag
 	sd = sin(d)
 	cd = cos(d)
 	cd2 = cd**2
@@ -95,22 +93,14 @@ def branchdeducing_twofinite(d, rs, rd):
 	C3 = C5 / (6 * 2**(2.0 / 3.0) * C1) + C1 / (12 * 2**(1.0 / 3.0)) 
 	C4 = sqrt(C2 + C3)
 
-	l1 = atan(((rs + rd * sqrt(1 - rd2 + rs2)) / (rs2 - rd2)).real)
-	l2 = np.pi * (7.000e-4 * sin(np.pi * (3.600 * rs + 2.0 / 3.0)) * rd**4 + 
-	           3.500e-4 * sin(np.pi * (3.600 * rs + 5.0 / 3.0)) * rd**3 +
-	           4.725e-4 * sin(np.pi * (3.550 * rs + 2.0 / 3.0)) * rd2 + 
-	           3.750e-4 * sin(np.pi * (3.525 * rs - 1.0 / 3.0)) * rd +
-	           1.550e-4 * sin(np.pi * (211.0 / 60.0 * rs + 2.0 / 3.0)))
-	if flag:
-		print(l1, l2.real)
-		flag = False
+	l1 = np.arctan(((rs + rd * sqrt(1 - rd2 + rs2)) , (rs2 - rd2)).real) + np.pi
+
 	if - np.pi / 2 <= d and d < l1:
 		return -acos(((rd * cd) * 0.25 + C4 * 0.5 + sqrt(2 * C2 - C3 + (rd**3 * cd**3 - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real)
-	elif l1 <= d and d <= l2:
-		return acos(((rd * cd) * 0.25 + C4 * 0.5 + sqrt(2 * C2 - C3 + (rd**3 * cd**3 - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real)
-	elif d <= np.pi / 2:
-		return acos(((rd * cd) * 0.25 + C4 * 0.5 - sqrt(2 * C2 - C3 + (rd**3 * cd**3 - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real)
-
+	elif l1 <= d and d <= np.pi / 2:
+		p1 = acos(((rd * cd) * 0.25 + C4 * 0.5 + sqrt(2 * C2 - C3 + (rd**3 * cd**3 - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real)
+		p2 = acos(((rd * cd) * 0.25 + C4 * 0.5 - sqrt(2 * C2 - C3 + (rd**3 * cd**3 - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real)
+		return p2
 
 def numerical(td, rs, rd, ts=np.pi*0.5, rt=2575.0):
 	tolerance = 1e-6
@@ -139,6 +129,6 @@ def numerical(td, rs, rd, ts=np.pi*0.5, rt=2575.0):
 
 import matplotlib.pyplot as plt
 x = np.linspace(-np.pi*0.5, np.pi*0.5, 20)
-y = [branchdeducing_onefinite(d, 0.85) for d in x]
-plt.plot(x, y)
+y = [branchdeducing_twofinite(d, 0.85, 0.95) for d in x]
+plt.scatter(x, y, marker='.')
 plt.show()
