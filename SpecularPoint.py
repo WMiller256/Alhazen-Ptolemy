@@ -19,17 +19,7 @@ def f_C7(d, c, b):
 	C4 = C1 / (6 * 2**(2.0 / 3.0) * C3) + C3 / (12 * 2**(1.0 / 3.0)) 
 	C5 = sqrt((b2 * cd2) / 4.0 - C0 / 6.0 + C4)	
 
-	return  ((b2 * cd2) / 2 - C0 / 3.0 - C4 + (b**3 * cd**3 - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5)).real
-	print(cd)
-	print(sd)
-	print(cd2)
-	print(sd2)
-	print(C0)
-	print(C1)
-	print(C2)
-	print(C3)
-	print(C4)
-	print(C5)
+	return ((b2 * cd2) / 2 - C0 / 3.0 - C4 + (b**3 * cd**3 - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5)).real
 
 def onefinite(d, c, opt=0):
 	sd = sin(2 * d)
@@ -127,13 +117,10 @@ def branchdeducing_twofinite(d, c, b):
 	deriv = f_C7(d, c, b) - f_C7(d - tolerance, c, b)
 
 	if - np.pi / 2 <= d and d < l1:
-#		print('b: one  d: {: 6.4f} deriv: {: 6.4e}, l1: {: 6.4f}, l2: {: 6.4f}'.format(d, deriv, l1, l2))
 		return -acos(((b * cd) * 0.25 + C5 * 0.5 + sqrt(b2 * cd2 / 2.0 - C0 / 3.0 - C4 + (b**3 * cd**3 - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5))*0.5).real)
 	elif l1 <= d and d <= l2 and deriv <= 0:
-#		print('b: two  d: {: 6.4f} deriv: {: 6.4e}, l1: {: 6.4f}, l2: {: 6.4f}'.format(d, deriv, l1, l2))
 		return  acos(((b * cd) * 0.25 + C5 * 0.5 + sqrt(b2 * cd2 / 2.0 - C0 / 3.0 - C4 + (b**3 * cd**3 - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5))*0.5).real)
 	elif (l2 < d and d < np.pi/2) or deriv > 0:
-#		print('b: thr  d: {: 6.4f} deriv: {: 6.4e}, l1: {: 6.4f}, l2: {: 6.4f}'.format(d, deriv, l1, l2))
 		return  acos(((b * cd) * 0.25 + C5 * 0.5 - sqrt(b2 * cd2 / 2.0 - C0 / 3.0 - C4 + (b**3 * cd**3 - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5))*0.5).real)
 
 def numerical(td, c, b, ts=np.pi*0.5, rt=2575.0):
@@ -145,6 +132,8 @@ def numerical(td, c, b, ts=np.pi*0.5, rt=2575.0):
 	i = ts - (t2 - tp)
 	ie_diff = e - i
 	n = 0
+	# Until the difference between incidence and emission is below the tolerance,
+	# perform downhill minimization
 	while abs(ie_diff) > tolerance:
 		n += 1
 		t1 = np.arctan2(b * np.sin(td) - rt * np.sin(tp), b * np.cos(td) - rt * np.cos(tp))
@@ -157,6 +146,6 @@ def numerical(td, c, b, ts=np.pi*0.5, rt=2575.0):
 
 import matplotlib.pyplot as plt
 x = np.linspace(-np.pi*0.5, np.pi*0.5, 200)
-y = [branchdeducing_twofinite(d, 0.85, 0.95) for d in x]
+y = [branchdeducing_onefinite(d, 0.85) for d in x]
 plt.plot(x, y)
 plt.show()
