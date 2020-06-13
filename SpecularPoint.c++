@@ -8,6 +8,7 @@
 #include <chrono>
 
 const double pi = atan(1)*4;
+const double tolerance = 1e-9;
 typedef std::complex<double> cdouble;
 
 cdouble operator*(const cdouble& cd, int i) { return cd * std::complex<double>(i); }
@@ -17,83 +18,74 @@ cdouble operator+(int i, const cdouble& cd) { return cd + std::complex<double>(i
 cdouble operator-(const cdouble& cd, int i) { return cd - std::complex<double>(i); }
 cdouble operator-(int i, const cdouble& cd) { return std::complex<double>(i) - cd; }
 
-double onefinite(const double &d, const double &rs, bool print = false) {
-	cdouble sd = sin(2 * d);
-	cdouble cd = cos(2 * d);
-	cdouble rs2 = std::pow(rs, 2);
-	cdouble rs2_4 = rs2 - 4;
-	cdouble rs2_43 = std::pow(rs2_4, 3);
-	cdouble rs4 = std::pow(rs, 4);
+double f_C7(const double &d, const double &c, const double &b) {
+	static cdouble sd = sin(d);
+	static cdouble cd = cos(d);
+	static cdouble cd2 = std::pow(cd, 2);
+	static cdouble sd2 = std::pow(sd, 2);
+	static cdouble c2 = std::pow(c, 2);
+	static cdouble b2 = std::pow(b, 2);
 
-	cdouble C0 = 1152 * rs2_4 * (-1 + rs2 - cd + rs2 * cd) + 864 * rs2 * std::pow(sd, 2);
-	cdouble C1 = std::sqrt(-4 * std::pow(160 - 128 * rs2 + 4 * rs4 + 96 * cd - 96 * rs2 * cd, 3) + std::pow(-16 * rs2_43 - C0, 2));
-	cdouble C2 = std::pow(16 * rs2_43 + C0 - C1, 1.0 / 3.0);
-	cdouble C3 = (40 - 32 * rs2 + rs4 + 24 * cd - 24 * rs2 * cd) / (3 * std::pow(2, 2.0 / 3.0) * C2) + C2 / (24 * std::cbrt(2));
-	cdouble C4 = std::sqrt(-0.25 * rs2_4 + (1.0 / 12.0) * rs2_4 + C3);
-	double p;
-	double l = -7.4522e-2 * std::pow(rs, 4) + 2.9926e-2 * std::pow(rs, 3) - 3.8429e-2 * std::pow(rs, 2) - 7.0116e-1 * rs + 1.834e-4;
-	if (d <= l) {
-	 	p = acos((0.5 * C4 - 0.5 * std::sqrt(-(rs2_4 / 3.0) - C3 + (rs * sd) / (2 * C4))).real());
-	}
-	else if (d > l) {
-	 	p = acos((0.5 * C4 + 0.5 * std::sqrt(-(rs2_4 / 3.0) - C3 + (rs * sd) / (2 * C4))).real());
-	}
- 	if (print) {
-		std::cout << "+--- " << acos((-0.5 * C4 - 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))).real()) << std::endl;
-		std::cout << "+-+- " << acos((-0.5 * C4 + 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))).real()) << std::endl;
-		std::cout << "++-+ " << p << std::endl;
-		std::cout << "++++ " << acos((0.5 * C4 + 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))).real()) << std::endl;
-		std::cout << "-+++ " << -acos((0.5 * C4 + 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))).real()) << std::endl;
-		std::cout << "-+-+ " << -acos((0.5 * C4 - 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 + (rs * sd) / (2 * C4))).real()) << std::endl;
-		std::cout << "--+- " << -acos((-0.5 * C4 + 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))).real()) << std::endl;
-		std::cout << "---- " << -acos((-0.5 * C4 - 0.5 * std::sqrt(-(1.0 / 3.0) * rs2_4 - C3 - (rs * sd) / (2 * C4))).real()) << std::endl;
-	}
-	return p;
+	static cdouble C0 = b2 + c2 + 2 * b * c * sd - 4;
+	static cdouble C1 = 24 * b * cd2 * (b - c * sd) - 48 * (-1 + c2) * cd2 + std::pow(C0, 2); 
+	static cdouble C2 = -432 * b2 * (-1 + c2) * std::pow(cd2, 2) + 432 * cd2 * std::pow(b - c * sd,2) + 72 * b * cd2 * (b - c * sd) * C0 + 
+				 288 * (-1 + c2) * cd2 * C0 + 2 * std::pow(C0, 3); 
+	static cdouble C3 = std::pow(C2 + std::sqrt(-4 * std::pow(C1, 3) + std::pow(C2, 2)), 1.0 / 3.0); 
+	static cdouble C4 = C1 / (6 * std::pow(2, 2.0 / 3.0) * C3) + C3 / (12 * std::cbrt(2)); 
+	static cdouble C5 = std::sqrt((b2 * cd2) / 4.0 - C0 / 6.0 + C4);
+	return (b2 * cd2 / 2.0 - C0 / 3.0 - C4 + (std::pow(b, 3) * std::pow(cd, 3) - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5)).real();
 }
 
-double twofinite(const double &d, const double &rs, const double &rd, bool print = false) {
+double onefinite(const double &d, const double &c, bool print = false) {
+	cdouble sd = sin(2 * d);
+	cdouble cd = cos(2 * d);
+	cdouble c2 = std::pow(c, 2);
+	cdouble c2_4 = c2 - 4;
+	cdouble c2_43 = std::pow(c2_4, 3);
+	cdouble c4 = std::pow(c, 4);
+
+	cdouble C0 = 1152 * c2_4 * (-1 + c2 - cd + c2 * cd) + 864 * c2 * std::pow(sd, 2);
+	cdouble C1 = std::sqrt(-4 * std::pow(160 - 128 * c2 + 4 * c4 + 96 * cd - 96 * c2 * cd, 3) + std::pow(-16 * c2_43 - C0, 2));
+	cdouble C2 = std::pow(16 * c2_43 + C0 - C1, 1.0 / 3.0);
+	cdouble C3 = (40 - 32 * c2 + c4 + 24 * cd - 24 * c2 * cd) / (3 * std::pow(2, 2.0 / 3.0) * C2) + C2 / (24 * std::cbrt(2));
+	cdouble C4 = std::sqrt(-0.25 * c2_4 + (1.0 / 12.0) * c2_4 + C3);
+	
+	double p1 = acos((0.5 * C4 - 0.5 * std::sqrt(-(c2_4 / 3.0) - C3 + (c * sd) / (2 * C4))).real());
+	double p2 = acos((0.5 * C4 + 0.5 * std::sqrt(-(c2_4 / 3.0) - C3 + (c * sd) / (2 * C4))).real());
+	double l1 = pi * (tan(1.0 / c) - d) / (pi + 2 * tan(1.0 / c));
+	
+	if (abs(p1 - l1) >= abs(p2 - l1)) return p1;
+	else return p2;
+}
+
+double twofinite(const double &d, const double &c, const double &b) {
 	cdouble sd = sin(d);
 	cdouble cd = cos(d);
 	cdouble cd2 = std::pow(cd, 2);
 	cdouble sd2 = std::pow(sd, 2);
-	cdouble rs2 = std::pow(rs, 2);
-	cdouble rd2 = std::pow(rd, 2);
+	cdouble c2 = std::pow(c, 2);
+	cdouble b2 = std::pow(b, 2);
 
-	cdouble C0 = rd2 + rs2 + 2 * rd * rs * sd - 4;
-	cdouble C5 = 24 * rd * cd2 * (rd - rs * sd) - 48 * (-1 + rs2) * cd2 + std::pow(C0, 2); 
-	cdouble C6 = -432 * rd2 * (-1 + rs2) * std::pow(cd2, 2) + 432 * cd2 * std::pow(rd - rs * sd,2) + 72 * rd * cd2 * (rd - rs * sd) * C0 + 288 * (-1 + rs2) * cd2 * C0 + 2 * std::pow(C0, 3); 
-	cdouble C1 = std::pow(C6 + std::sqrt(-4 * std::pow(C5, 3) + std::pow(C6, 2)), 1.0 / 3.0); 
-	cdouble C2 = (rd2 * cd2) / 4.0 - C0 / 6.0; 
-	cdouble C3 = C5 / (6 * std::pow(2, 2.0 / 3.0) * C1) + C1 / (12 * std::cbrt(2)); 
-	cdouble C4 = std::sqrt(C2 + C3);
-	double p;
-	double l1 = (std::atan(rs + rd * std::sqrt(1 - rd2 + rs2) / (rs2 + rd2)) - pi).real();
-	double l2 = pi * (7.000e-4 * sin(pi * (3.600 * rs + 2.0 / 3.0)) * std::pow(rs, 4) + 
-			          3.500e-4 * sin(pi * (3.600 * rs + 5.0 / 3.0)) * std::pow(rs, 3) +
-			          4.725e-4 * sin(pi * (3.550 * rs + 2.0 / 3.0)) * std::pow(rs, 2) + 
-			          3.750e-4 * sin(pi * (3.525 * rs - 1.0 / 3.0)) * std::pow(rs, 1) +
-			          1.550e-4 * sin(pi * (211.0 / 60.0 * rs + 2.0 / 3.0)));
-	if (-pi / 2 < d && d < l1) {
-		p = -acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
-	}
-	else if (l1 <= d && d <= l2) {
-		p = acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
-	}
-	else if (l2 < d && d <= pi / 2) {
-		p = acos((rd * cd) * 0.25 + C4 * 0.5 - std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real();
-	}
-	if (print) {
-		std::cout << "+--- " << acos((rd * cd) * 0.25 - C4 * 0.5 - std::sqrt(2 * C2 - C3 - (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
-		std::cout << "+-+- " << acos((rd * cd) * 0.25 - C4 * 0.5 + std::sqrt(2 * C2 - C3 - (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
-		std::cout << "++-+ " << p << std::endl;
-		std::cout << "++++ " << acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
-		std::cout << "-+++ " << -acos((rd * cd) * 0.25 + C4 * 0.5 + std::sqrt(2 * C2 - C3 + (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
-		std::cout << "-+-+ " << -p << std::endl;
-		std::cout << "--+- " << -acos((rd * cd) * 0.25 - C4 * 0.5 + std::sqrt(2 * C2 - C3 - (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
-		std::cout << "---- " << -acos((rd * cd) * 0.25 - C4 * 0.5 - std::sqrt(2 * C2 - C3 - (std::pow(rd, 3) * std::pow(cd, 3) - 4 * cd * (rd - rs * sd) - rd * cd * C0) / (4 * C4))*0.5).real() << std::endl;
-	}
+	cdouble C0 = b2 + c2 + 2 * b * c * sd - 4;
+	cdouble C1 = 24 * b * cd2 * (b - c * sd) - 48 * (-1 + c2) * cd2 + std::pow(C0, 2); 
+	cdouble C2 = -432 * b2 * (-1 + c2) * std::pow(cd2, 2) + 432 * cd2 * std::pow(b - c * sd,2) + 72 * b * cd2 * (b - c * sd) * C0 + 
+				 288 * (-1 + c2) * cd2 * C0 + 2 * std::pow(C0, 3); 
+	cdouble C3 = std::pow(C2 + std::sqrt(-4 * std::pow(C1, 3) + std::pow(C2, 2)), 1.0 / 3.0); 
+	cdouble C4 = C1 / (6 * std::pow(2, 2.0 / 3.0) * C3) + C3 / (12 * std::cbrt(2)); 
+	cdouble C5 = std::sqrt((b2 * cd2) / 4.0 - C0 / 6.0 + C4);
+	cdouble C7 = b2 * cd2 / 2.0 - C0 / 3.0 - C4 + (std::pow(b, 3) * std::pow(cd, 3) - 4 * cd * (b - c * sd) - b * cd * C0) / (4 * C5);
 
-	return p;
+	double l1 = -std::atan2((c + b * sqrt(1 - b2 + c2)).real(), (b2 - c2).real());
+	double l2 = -std::atan2((c - b * sqrt(1 - b2 + c2)).real(), (b2 - c2).real());
+
+	if (-pi / 2 <= d && d < l1) {
+		return -acos((b * cd) * 0.25 + C5 * 0.5 + std::sqrt(C7)*0.5).real();
+	}
+	else {
+		double deriv = C7.real() - f_C7(d - tolerance, c, b);
+		if (d <= l2 && deriv <= 0)                    return  acos((b * cd) * 0.25 + C5 * 0.5 + std::sqrt(C7)*0.5).real();
+		else if ((l2 < d && d < pi / 2) || deriv > 0) return  acos((b * cd) * 0.25 + C5 * 0.5 - std::sqrt(C7)*0.5).real();
+	}
 }
 
 double randf(double a, double b) { return (double(rand()) / double(RAND_MAX)) * (b - a) + a; }
@@ -141,13 +133,13 @@ int main(int argn, char** argv) {
 	else {
 		std::cout << "d is in degrees" << std::endl;
 		double d = atof(argv[1]) * pi / 180.0;
-		double rs = atof(argv[2]);
+		double c = atof(argv[2]);
 		if (argn > 3) {
-			double rd = atof(argv[3]);
-			std::cout << twofinite(d, rs, rd, true) << std::endl;
+			double b = atof(argv[3]);
+			std::cout << twofinite(d, c, b) << std::endl;
 		}
 		else {
-			std::cout << onefinite(d, rs, true) << std::endl;
+			std::cout << onefinite(d, c, true) << std::endl;
 		}
 	}
 }
