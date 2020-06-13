@@ -5,6 +5,8 @@ from math import acos, atan
 tolerance = 1e-9
 
 def f_C7(obs, c, b):
+# Convenience function which calculates the C7 coefficient
+# for a given observer angle and radius and source radius
 	s_obs = sin(obs)
 	c_obs = cos(obs)
 	c_obs2 = c_obs**2
@@ -22,6 +24,11 @@ def f_C7(obs, c, b):
 	return ((b2 * c_obs2) / 2 - C0 / 3.0 - C4 + (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * C0) / (4 * C5)).real
 
 def onefinite(obs, c, branch=0):
+# Calculates ALL solutions for the one-finite case without 
+# branch deduction. This is more useful for plotting all the 
+# solutions over a given interval than for finding the physical
+# specular point
+
 	s_obs = sin(2 * obs)
 	c_obs = cos(2 * obs)
 	c2 = c**2 + 0j
@@ -47,6 +54,11 @@ def onefinite(obs, c, branch=0):
 		return acos(p.real)
 
 def twofinite(obs, c, b, branch=0):
+# Calculates ALL solutions for the both-finite case without 
+# branch deduction. This is more useful for plotting all the 
+# solutions over a given interval than for finding the physical
+# specular point
+
 	s_obs = sin(obs)
 	c_obs = cos(obs)
 	c_obs2 = c_obs**2
@@ -74,6 +86,9 @@ def twofinite(obs, c, b, branch=0):
 		return acos(p.real)
 
 def branchdeducing_onefinite(obs, c):
+# Calculates the specular point in the one-finite case,
+# performing the necessary branch deductions automatically
+
 	s_obs = sin(2 * obs)
 	c_obs = cos(2 * obs)
 	c2 = c**2 + 0j
@@ -89,6 +104,8 @@ def branchdeducing_onefinite(obs, c):
 
 	p1 = acos((0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 + (c * s_obs) / (2 * C4))).real)
 	p2 = acos((0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 + (c * s_obs) / (2 * C4))).real)
+	# Use the slope of the line between (-pi/2, pi/2) to ({l}, 0) 
+	# to deduce the correct branch
 	l = (np.pi * (np.arctan(1 / c) - obs)) / (np.pi + 2 * np.arctan(1 / c))
 	if abs(p1 - l) >= abs(p2 - l):
 		return p1
@@ -97,6 +114,9 @@ def branchdeducing_onefinite(obs, c):
 	
 
 def branchdeducing_twofinite(obs, c, b):
+# Calculates the specular point in the both-finite case,
+# performing the necessary branch deductions automatically
+
 	s_obs = sin(obs)
 	c_obs = cos(obs)
 	c_obs2 = c_obs**2
@@ -114,6 +134,8 @@ def branchdeducing_twofinite(obs, c, b):
 
 	l1 = -np.arctan2((c + b * sqrt(1 - b2 + c2)).real, (b2 - c2).real)
 	l2 = -np.arctan2((c - b * sqrt(1 - b2 + c2)).real, (b2 - c2).real)
+	# This approximation for the derivative of C7 is very robust, 
+	# assuming the machine precision is larger than tolerance
 	deriv = f_C7(obs, c, b) - f_C7(obs - tolerance, c, b)
 
 	if - np.pi / 2 <= obs and obs < l1:
@@ -124,6 +146,11 @@ def branchdeducing_twofinite(obs, c, b):
 		return  acos(((b * c_obs) * 0.25 + C5 * 0.5 - sqrt(b2 * c_obs2 / 2.0 - C0 / 3.0 - C4 + C6)*0.5).real)
 
 def numerical(obs, c, b, src=np.pi*0.5, rt=2575.0):
+# Numerically determines the specular point for an arbitrary 
+# configuration of source and observer for a sphere of 
+# arbitrary size. c and b are mutated for notational consistency
+# with the other routines.
+
 	c = rt / c
 	b = rt / b
 	tolerance = 1e-6
