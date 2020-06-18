@@ -102,16 +102,19 @@ double twofinite(const double &obs, const double &c, const double &b) {
     static cdouble C5 = std::sqrt((b2 * c_obs2) / 4.0 - C0 / 6.0 + C4);
     static cdouble C7 = b2 * c_obs2 / 2.0 - C0 / 3.0 - C4 + (std::pow(b, 3) * std::pow(c_obs, 3) - 4 * c_obs * (b - c * s_obs) - b * c_obs * C0) / (4 * C5);
 
-    static double l1 = -std::atan2((c + b * sqrt(1 - b2 + c2)).real(), (b2 - c2).real());
-    static double l2 = -std::atan2((c - b * sqrt(1 - b2 + c2)).real(), (b2 - c2).real());
+    static double l1 = -std::atan2((c + b * std::sqrt(1 - b2 + c2)).real(), (b2 - c2).real());
+    static double l2 = -std::atan2((c - b * std::sqrt(1 - b2 + c2)).real(), (b2 - c2).real());
 
     // If we are below the lower limit {l1} we know we are on the -+++ branch
     if (-pi / 2 <= obs && obs < l1) return -acos((b * c_obs) * 0.25 + C5 * 0.5 + std::sqrt(C7)*0.5).real();
+	// Else, if we are above {l2} we know we have passed the intesection between the 
+	// ++++ and ++-+ branches, and are on the ++-+ branch. 
+    else if (obs > l2)  return acos((b * c_obs) * 0.25 + C5 * 0.5 - std::sqrt(C7)*0.5).real();
     else {
         // Otherwise, the branch deduction requires analysis of the derivative
         static double deriv = C7.real() - f_C7(obs - tolerance, c, b);
         // If the derivative less than 0 and we are below {l2} we are on the ++++ branch
-        if (obs <= l2 && deriv <= 0)                    return acos((b * c_obs) * 0.25 + C5 * 0.5 + std::sqrt(C7)*0.5).real();
+        if (obs <= l2 && deriv <= 0) return acos((b * c_obs) * 0.25 + C5 * 0.5 + std::sqrt(C7)*0.5).real();
         // If the derivative is greater than zero or if we are above {l2} we must be on the ++-+ branch
         else if ((l2 < obs && obs < pi / 2) || deriv > 0) return acos((b * c_obs) * 0.25 + C5 * 0.5 - std::sqrt(C7)*0.5).real();
     }
