@@ -24,7 +24,7 @@ def f_C7(obs, c, b):
 	return ((b2 * c_obs2) / 2 - C0 / 3.0 - C4 + (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * C0) / (4 * C5)).real
 
 def onefinite(obs, c, branch=0):
-# Calculates ALL solutions for the one-finite case without 
+# Calculates a specific solution for the one-finite case without 
 # branch deduction. This is more useful for plotting all the 
 # solutions over a given interval than for finding the physical
 # specular point
@@ -54,7 +54,7 @@ def onefinite(obs, c, branch=0):
 		return acos(p.real)
 
 def twofinite(obs, c, b, branch=0):
-# Calculates ALL solutions for the both-finite case without 
+# Calculates a specific solution for the both-finite case without 
 # branch deduction. This is more useful for plotting all the 
 # solutions over a given interval than for finding the physical
 # specular point
