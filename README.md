@@ -4,22 +4,22 @@ arbitrary spatial configuration of source and observer (known as the Alhazen-Pto
 
 Alhazen-Ptolemy.c++ has three use modes: benchmarking, one-finite, and both-finite. 
 
-The benchmarking usage is
+The benchmarking usage is 
 
 ```
-~/bin/alhazen-ptolemy
+alhazen-ptolemy
 ```
 
 The one-finite usage is 
 
 ```
-~/bin/alhazen-ptolemy <observer_angle> <c>
+alhazen-ptolemy <observer_angle> <c>
 ```
 
 And the both-finite usage is
 
 ```
-~/bin/alhazen-ptolemy <observer_angle> <c> <b>
+alhazen-ptolemy <observer_angle> <c> <b>
 ```
 
 `observer_angle` corresponds to <i>&theta;</i><sub>obs</sub> and is specified in degrees as the angle from the positive <i>x</i>-axis, 
