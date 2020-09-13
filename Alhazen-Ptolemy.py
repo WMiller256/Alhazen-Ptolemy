@@ -4,7 +4,7 @@ from math import acos, atan
 
 tolerance = 1e-9
 
-def f_C7(obs, c, b):
+def f_E7(obs, c, b):
 # Convenience function which calculates the C7 coefficient
 # for a given observer angle and radius and source radius
 	s_obs = sin(obs)
@@ -14,14 +14,14 @@ def f_C7(obs, c, b):
 	c2 = c**2
 	b2 = b**2
 
-	C0 = c2 - 4 + b2 + 2 * b * c * s_obs
-	C1 = 24 * b * c_obs2 * (b - c * s_obs) - 48 * (-1 + c2) * c_obs2 + C0**2 
-	C2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * C0 + 288 * (-1 + c2) * c_obs2 * C0 + 2 * C0**3 
-	C3 = (C2 + sqrt(-4 * C1**3 + C2**2))**(1.0 / 3.0) 
-	C4 = C1 / (6 * 2**(2.0 / 3.0) * C3) + C3 / (12 * 2**(1.0 / 3.0)) 
-	C5 = sqrt((b2 * c_obs2) / 4.0 - C0 / 6.0 + C4)	
+	E0 = c2 - 4 + b2 + 2 * b * c * s_obs
+	E1 = 24 * b * c_obs2 * (b - c * s_obs) - 48 * (-1 + c2) * c_obs2 + E0**2 
+	E2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * E0 + 288 * (-1 + c2) * c_obs2 * E0 + 2 * E0**3 
+	E3 = (E2 + sqrt(-4 * E1**3 + E2**2))**(1.0 / 3.0) 
+	E4 = E1 / (6 * 2**(2.0 / 3.0) * E3) + E3 / (12 * 2**(1.0 / 3.0)) 
+	E5 = sqrt((b2 * c_obs2) / 4.0 - E0 / 6.0 + E4)	
 
-	return ((b2 * c_obs2) / 2 - C0 / 3.0 - C4 + (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * C0) / (4 * C5)).real
+	return ((b2 * c_obs2) / 2 - E0 / 3.0 - E4 + (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * E0) / (4 * E5)).real
 
 def onefinite(obs, c, branch=0):
 # Calculates a specific solution for the one-finite case without 
@@ -36,17 +36,17 @@ def onefinite(obs, c, branch=0):
 	c2_43 = c2_4**3
 	c4 = c**4
 
-	C0 = 1152 * c2_4 * (-1 + c2 - c_obs + c2 * c_obs) + 864 * c2 * s_obs**2
-	C1 = sqrt(-4 * (160 - 128 * c2 + 4 * c4 + 96 * c_obs - 96 * c2 * c_obs)**3 + (-16 * c2_43 - C0)**2)
-	C2 = (16 * c2_43 + C0 - C1)**(1.0 / 3.0)
-	C3 = (40 - 32 * c2 + c4 + 24 * c_obs - 24 * c2 * c_obs) / (3 * 2**(2.0 / 3.0) * C2) + C2 / (24 * 2**(1.0 / 3.0))
-	C4 = sqrt(-0.25 * c2_4 + (1.0 / 12.0) * c2_4 + C3)
+	D0 = 1152 * c2_4 * (-1 + c2 - c_obs + c2 * c_obs) + 864 * c2 * s_obs**2
+	D1 = sqrt(-4 * (160 - 128 * c2 + 4 * c4 + 96 * c_obs - 96 * c2 * c_obs)**3 + (-16 * c2_43 - D0)**2)
+	D2 = (16 * c2_43 + D0 - D1)**(1.0 / 3.0)
+	D3 = (40 - 32 * c2 + c4 + 24 * c_obs - 24 * c2 * c_obs) / (3 * 2**(2.0 / 3.0) * D2) + D2 / (24 * 2**(1.0 / 3.0))
+	D4 = sqrt(-0.25 * c2_4 + (1.0 / 12.0) * c2_4 + D3)
 
-	p = -0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 - (c * s_obs) / (2 * C4))
-	if branch == 0 or branch == 7: p = -0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 - (c * s_obs) / (2 * C4))
-	if branch == 1 or branch == 6: p = -0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 - (c * s_obs) / (2 * C4))
-	if branch == 2 or branch == 5: p =  0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 + (c * s_obs) / (2 * C4))
-	if branch == 3 or branch == 4: p =  0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 + (c * s_obs) / (2 * C4))
+	p = -0.5 * D4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 - (c * s_obs) / (2 * D4))
+	if branch == 0 or branch == 7: p = -0.5 * D4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 - (c * s_obs) / (2 * D4))
+	if branch == 1 or branch == 6: p = -0.5 * D4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 - (c * s_obs) / (2 * D4))
+	if branch == 2 or branch == 5: p =  0.5 * D4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 + (c * s_obs) / (2 * D4))
+	if branch == 3 or branch == 4: p =  0.5 * D4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 + (c * s_obs) / (2 * D4))
 
 	if branch > 3:
 		return -acos(p.real)
@@ -66,19 +66,19 @@ def twofinite(obs, c, b, branch=0):
 	c2 = c**2
 	b2 = b**2
 
-	C0 = c2 - 4 + b2 + 2 * b * c * s_obs
-	C1 = 24 * b * c_obs2 * (b - c * s_obs) - 48 * (-1 + c2) * c_obs2 + C0**2 
-	C2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * C0 + 288 * (-1 + c2) * c_obs2 * C0 + 2 * C0**3 
-	C3 = (C2 + sqrt(-4 * C1**3 + C2**2))**(1.0 / 3.0) 
-	C4 = C1 / (6 * 2**(2.0 / 3.0) * C3) + C3 / (12 * 2**(1.0 / 3.0)) 
-	C5 = sqrt((b2 * c_obs2) / 4.0 - C0 / 6.0 + C4)
-	C6 = (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * C0) / (4 * C5)
+	E0 = c2 - 4 + b2 + 2 * b * c * s_obs
+	E1 = 24 * b * c_obs2 * (b - c * s_obs) - 48 * (-1 + c2) * c_obs2 + E0**2 
+	E2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * E0 + 288 * (-1 + c2) * c_obs2 * E0 + 2 * E0**3 
+	E3 = (E2 + sqrt(-4 * E1**3 + E2**2))**(1.0 / 3.0) 
+	E4 = E1 / (6 * 2**(2.0 / 3.0) * E3) + E3 / (12 * 2**(1.0 / 3.0)) 
+	E5 = sqrt((b2 * c_obs2) / 4.0 - E0 / 6.0 + E4)
+	E6 = (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * E0) / (4 * E5)
 
-	p = (b * c_obs) * 0.25 + C4 * 0.5 - sqrt(2 * c_obs2 - C3 + C6)*0.5
-	if branch == 0 or branch == 7: p = (b * c_obs) * 0.25 - C4 * 0.5 - sqrt(2 * c_obs2 - C3 - C6)*0.5
-	if branch == 1 or branch == 6: p = (b * c_obs) * 0.25 - C4 * 0.5 + sqrt(2 * c_obs2 - C3 - C6)*0.5
-	if branch == 2 or branch == 5: p = (b * c_obs) * 0.25 + C4 * 0.5 - sqrt(2 * c_obs2 - C3 + C6)*0.5
-	if branch == 3 or branch == 4: p = (b * c_obs) * 0.25 + C4 * 0.5 + sqrt(2 * c_obs2 - C3 + C6)*0.5
+	p = (b * c_obs) * 0.25 + E4 * 0.5 - sqrt(2 * c_obs2 - E3 + E6)*0.5
+	if branch == 0 or branch == 7: p = (b * c_obs) * 0.25 - E4 * 0.5 - sqrt(2 * c_obs2 - E3 - E6)*0.5
+	if branch == 1 or branch == 6: p = (b * c_obs) * 0.25 - E4 * 0.5 + sqrt(2 * c_obs2 - E3 - E6)*0.5
+	if branch == 2 or branch == 5: p = (b * c_obs) * 0.25 + E4 * 0.5 - sqrt(2 * c_obs2 - E3 + E6)*0.5
+	if branch == 3 or branch == 4: p = (b * c_obs) * 0.25 + E4 * 0.5 + sqrt(2 * c_obs2 - E3 + E6)*0.5
 
 	if branch > 3:
 		return -acos(p.real)
@@ -96,14 +96,14 @@ def branchdeducing_onefinite(obs, c):
 	c2_43 = c2_4**3
 	c4 = c**4
 
-	C0 = 1152 * c2_4 * (-1 + c2 - c_obs + c2 * c_obs) + 864 * c2 * s_obs**2
-	C1 = sqrt(-4 * (160 - 128 * c2 + 4 * c4 + 96 * c_obs - 96 * c2 * c_obs)**3 + (-16 * c2_43 - C0)**2)
-	C2 = (16 * c2_43 + C0 - C1)**(1.0 / 3.0)
-	C3 = (40 - 32 * c2 + c4 + 24 * c_obs - 24 * c2 * c_obs) / (3 * 2**(2.0 / 3.0) * C2) + C2 / (24 * 2**(1.0 / 3.0))
-	C4 = sqrt(-0.25 * c2_4 + (1.0 / 12.0) * c2_4 + C3)
+	D0 = 1152 * c2_4 * (-1 + c2 - c_obs + c2 * c_obs) + 864 * c2 * s_obs**2
+	D1 = sqrt(-4 * (160 - 128 * c2 + 4 * c4 + 96 * c_obs - 96 * c2 * c_obs)**3 + (-16 * c2_43 - D0)**2)
+	D2 = (16 * c2_43 + D0 - D1)**(1.0 / 3.0)
+	D3 = (40 - 32 * c2 + c4 + 24 * c_obs - 24 * c2 * c_obs) / (3 * 2**(2.0 / 3.0) * D2) + D2 / (24 * 2**(1.0 / 3.0))
+	D4 = sqrt(-0.25 * c2_4 + (1.0 / 12.0) * c2_4 + D3)
 
-	p1 = acos((0.5 * C4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 + (c * s_obs) / (2 * C4))).real)
-	p2 = acos((0.5 * C4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - C3 + (c * s_obs) / (2 * C4))).real)
+	p1 = acos((0.5 * D4 + 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 + (c * s_obs) / (2 * D4))).real)
+	p2 = acos((0.5 * D4 - 0.5 * sqrt(-(1.0 / 3.0) * c2_4 - D3 + (c * s_obs) / (2 * D4))).real)
 	# Use the slope of the line between (-pi/2, pi/2) to ({l}, 0) 
 	# to deduce the correct branch
 	l = (np.pi * (np.arctan(1 / c) - obs)) / (np.pi + 2 * np.arctan(1 / c))
@@ -124,26 +124,26 @@ def branchdeducing_twofinite(obs, c, b):
 	c2 = c**2
 	b2 = b**2
 
-	C0 = c2 - 4 + b2 + 2 * b * c * s_obs
-	C1 = 24 * b * c_obs2 * (b - c * s_obs) - 48 * (-1 + c2) * c_obs2 + C0**2 
-	C2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * C0 + 288 * (-1 + c2) * c_obs2 * C0 + 2 * C0**3 
-	C3 = (C2 + sqrt(-4 * C1**3 + C2**2))**(1.0 / 3.0) 
-	C4 = C1 / (6 * 2**(2.0 / 3.0) * C3) + C3 / (12 * 2**(1.0 / 3.0)) 
-	C5 = sqrt((b2 * c_obs2) / 4.0 - C0 / 6.0 + C4)
-	C6 = (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * C0) / (4 * C5)
+	E0 = c2 - 4 + b2 + 2 * b * c * s_obs
+	E1 = 24 * b * c_obs2 * (b - c * s_obs) - 48 * (-1 + c2) * c_obs2 + E0**2 
+	E2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * E0 + 288 * (-1 + c2) * c_obs2 * E0 + 2 * E0**3 
+	E3 = (E2 + sqrt(-4 * E1**3 + E2**2))**(1.0 / 3.0) 
+	E4 = E1 / (6 * 2**(2.0 / 3.0) * E3) + E3 / (12 * 2**(1.0 / 3.0)) 
+	E5 = sqrt((b2 * c_obs2) / 4.0 - E0 / 6.0 + E4)
+	E6 = (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * E0) / (4 * E5)
 
 	l1 = -np.arctan2((c + b * sqrt(1 - b2 + c2)).real, (b2 - c2).real)
 	l2 = -np.arctan2((c - b * sqrt(1 - b2 + c2)).real, (b2 - c2).real)
-	# This approximation for the derivative of C7 is very robust, 
+	# This approximation for the derivative of E7 is very robust, 
 	# assuming the machine precision is larger than tolerance
-	deriv = f_C7(obs, c, b) - f_C7(obs - tolerance, c, b)
+	deriv = f_E7(obs, c, b) - f_E7(obs - tolerance, c, b)
 
 	if - np.pi / 2 <= obs and obs < l1:
-		return -acos(((b * c_obs) * 0.25 + C5 * 0.5 + sqrt(b2 * c_obs2 / 2.0 - C0 / 3.0 - C4 + C6)*0.5).real)
+		return -acos(((b * c_obs) * 0.25 + E5 * 0.5 + sqrt(b2 * c_obs2 / 2.0 - E0 / 3.0 - E4 + E6)*0.5).real)
 	elif l1 <= obs and obs <= l2 and deriv <= 0:
-		return  acos(((b * c_obs) * 0.25 + C5 * 0.5 + sqrt(b2 * c_obs2 / 2.0 - C0 / 3.0 - C4 + C6)*0.5).real)
+		return  acos(((b * c_obs) * 0.25 + E5 * 0.5 + sqrt(b2 * c_obs2 / 2.0 - E0 / 3.0 - E4 + E6)*0.5).real)
 	elif (l2 < obs and obs < np.pi/2) or deriv > 0:
-		return  acos(((b * c_obs) * 0.25 + C5 * 0.5 - sqrt(b2 * c_obs2 / 2.0 - C0 / 3.0 - C4 + C6)*0.5).real)
+		return  acos(((b * c_obs) * 0.25 + E5 * 0.5 - sqrt(b2 * c_obs2 / 2.0 - E0 / 3.0 - E4 + E6)*0.5).real)
 
 def numerical(obs, c, b, src=np.pi*0.5, rt=2575.0):
 # Numerically determines the specular point for an arbitrary 
