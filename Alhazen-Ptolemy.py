@@ -1,4 +1,6 @@
 import numpy as np
+import argparse
+from sys import argv
 from cmath import sqrt, sin, cos
 from math import acos, atan
 
@@ -174,11 +176,20 @@ def numerical(obs, c, b, src=np.pi*0.5, rt=2575.0):
 		if n > 100: break
 	return spec
 
-obs = np.pi*0.25
-c = 0.85
-b = 0.95
-print(numerical(obs, c, b),
-onefinite(obs, c),
-twofinite(obs, c, b),
-branchdeducing_onefinite(obs, c),
-branchdeducing_twofinite(obs, c, b))
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('observer_angle', type=float, help='The angle of the observer in degrees. Required.')
+    parser.add_argument('c', type=float, help='The ratio between the radius of the sphere and the'
+                        ' distance to the observer. Required')
+    if len(argv) > 3:
+        parser.add_argument('b', type=float, help='The ratio between the radius of the sphere and the'
+                            ' distance to the source. Optional.')
+
+    args = parser.parse_args()
+    c = args.c
+    obs = args.observer_angle
+    if 'b' in args:
+        b = args.b
+        print(branchdeducing_twofinite(obs, c, b))
+    else:
+        print(branchdeducing_onefinite(obs, c))
