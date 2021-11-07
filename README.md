@@ -26,4 +26,23 @@ alhazen-ptolemy <observer_angle> <c> <b>
 `c` is the ratio between the radius of the sphere and the radius of the observer, i.e. <i>R</i><sub>sph</sub> / <i>R</i><sub>obs</sub>,
 and `b` is the ratio between the radius of the sphere and the radius of the source, i.e. <i>R</i><sub>sph</sub> / <i>R</i><sub>src</sub> .
 
-`Alhazen-Ptolemy.py` has the same usage as `Alhazen-Ptolemy.c++` except it does not feature any benchmarking.
+`alhazenptolemy.py` has the same usage as `Alhazen-Ptolemy.c++` except it does not feature any benchmarking. This directory is also an 
+installable python module. Installing with
+
+```
+python -m pip install Alhazen-Ptolemy
+```
+
+or
+
+```
+pip install Alhazen-Ptolemy
+```
+
+will make the `alhazenptolemy.py` module importable via
+
+```
+import alhazenptolemy
+```
+
+
