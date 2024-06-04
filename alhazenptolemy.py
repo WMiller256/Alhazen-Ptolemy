@@ -21,9 +21,9 @@ def f_E7(obs, c, b):
     E2 = -432 * b2 * (-1 + c2) * c_obs2**2 + 432 * c_obs2 * (b - c * s_obs)**2 + 72 * b * c_obs2 * (b - c * s_obs) * E0 + 288 * (-1 + c2) * c_obs2 * E0 + 2 * E0**3 
     E3 = (E2 + sqrt(-4 * E1**3 + E2**2))**(1.0 / 3.0) 
     E4 = E1 / (6 * 2**(2.0 / 3.0) * E3) + E3 / (12 * 2**(1.0 / 3.0)) 
-    E5 = sqrt((b2 * c_obs2) / 4.0 - E0 / 6.0 + E4)    
+    E5 = sqrt((b2 * c_obs2) / 4.0 - E0 / 6.0 + E4)
 
-    return ((b2 * c_obs2) / 2 - E0 / 3.0 - E4 + (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * E0) / (4 * E5)).real
+    return (0.5 * ((b2 * c_obs2) / 2 - E0 / 3.0) - E4 + (b**3 * c_obs**3 - 4 * c_obs * (b - c * s_obs) - b * c_obs * E0) / (16 * E5)).real
 
 def onefinite(obs, c, branch=0):
 # Calculates a specific solution for the one-finite case without 
@@ -159,7 +159,7 @@ def numerical(obs, c, b, src=np.pi*0.5, rt=2575.0):
 
     c = rt / c
     b = rt / b
-    tolerance = 1e-6
+    tolerance = 1e-9
     spec = src        # Start at the source
     t1 = np.arctan2(b * np.sin(obs) - rt * np.sin(spec), b * np.cos(obs) - rt * np.cos(spec))
     t2 = np.arctan2(c * np.sin(spec) - rt * np.sin(spec), c * np.cos(src) - rt * np.cos(spec))
@@ -168,7 +168,8 @@ def numerical(obs, c, b, src=np.pi*0.5, rt=2575.0):
     ie_diff = e - i
     n = 0
     # Until the difference between incidence and emission is below the tolerance,
-    # perform downhill minimization
+    # perform downhill minimization. Note that this method is numerically unstable
+    # and does not always converge, so a maximum of 10000 iterations is enforced
     while abs(ie_diff) > tolerance:
         n += 1
         t1 = np.arctan2(b * np.sin(obs) - rt * np.sin(spec), b * np.cos(obs) - rt * np.cos(spec))
@@ -177,7 +178,7 @@ def numerical(obs, c, b, src=np.pi*0.5, rt=2575.0):
         e = src - (spec - t1)
         i = src - (t2 - spec)
         ie_diff = e - i
-        if n > 100: break
+        if n > 10000: break
     return spec
 
 if __name__ == '__main__':
@@ -194,6 +195,8 @@ if __name__ == '__main__':
     obs = args.observer_angle
     if 'b' in args:
         b = args.b
-        print(branchdeducing_twofinite(obs, c, b))
+        print(f"Analytical: {branchdeducing_twofinite(obs, c, b): .15f}")
+        print(f"Numerical:  {numerical(obs, c, b): .15f}")
     else:
-        print(branchdeducing_onefinite(obs, c))
+        print(f"Analytical: {branchdeducing_onefinite(obs, c): .15f}")
+        print(f"Numerical:  {numerical(obs, c, 1e-9): .15f}")
