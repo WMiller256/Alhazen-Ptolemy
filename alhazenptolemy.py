@@ -55,7 +55,7 @@ def onefinite(obs, c, branch=0):
     else:
         return acos(p.real)
 
-def twofinite(obs, c, b, branch=0):
+def bothfinite(obs, c, b, branch=0):
 # Calculates a specific solution for the both-finite case without 
 # branch deduction. This is more useful for plotting all the 
 # solutions over a given interval than for finding the physical
@@ -115,7 +115,7 @@ def branchdeducing_onefinite(obs, c):
         return p2
     
 
-def branchdeducing_twofinite(obs, c, b):
+def branchdeducing_bothfinite(obs, c, b):
 # Calculates the specular point in the both-finite case,
 # performing the necessary branch deductions automatically
 
@@ -195,7 +195,7 @@ if __name__ == '__main__':
     obs = args.observer_angle
     if 'b' in args:
         b = args.b
-        print(f"Analytical: {branchdeducing_twofinite(obs, c, b): .15f}")
+        print(f"Analytical: {branchdeducing_bothfinite(obs, c, b): .15f}")
         print(f"Numerical:  {numerical(obs, c, b): .15f}")
     else:
         print(f"Analytical: {branchdeducing_onefinite(obs, c): .15f}")
